@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
+// Theme types
 type Theme = 'dark' | 'light' | 'system';
 
 type ThemeProviderProps = {

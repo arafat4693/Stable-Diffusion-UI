@@ -1,20 +1,21 @@
 import { InputForm } from '@/components/input-form';
-import { ImgData } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useAppSelector } from '@/lib/hooks/reduxHook';
 
 export default function Prompt() {
-  const [message, setMessage] = useState<ImgData | undefined>(undefined);
   const [steps, setSteps] = useState<number>(0);
-  const { generating } = useAppSelector((state) => state.allImages);
+  const { generating, generationHistory } = useAppSelector(
+    (state) => state.allImages
+  );
 
+  // For the progress bar while generating image
   useEffect(() => {
-    if (message) {
-      setSteps(message.completed ? 0 : message.step);
-    }
-  }, [message, generating]);
+    if (generationHistory) {
+      setSteps(generationHistory.completed ? 0 : generationHistory.step);
+    } else setSteps(0);
+  }, [generationHistory]);
 
   return (
     <main className="flex flex-col items-center flex-1 p-4 md:p-8">
@@ -22,9 +23,9 @@ export default function Prompt() {
         alt="Product image"
         className="object-cover w-[70%] rounded-md lg:w-1/3 aspect-square"
         src={
-          !message
+          !generationHistory
             ? '/placeholder.svg'
-            : `data:image/jpeg;base64,${message.image}`
+            : `data:image/jpeg;base64,${generationHistory.image}`
         }
       />
 
@@ -36,7 +37,7 @@ export default function Prompt() {
         )}
       />
 
-      <InputForm setMessage={setMessage} />
+      <InputForm />
     </main>
   );
 }

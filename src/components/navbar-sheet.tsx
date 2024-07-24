@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, Package2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+// For navbar. See in smaller screens
 export default function NavbarSheet() {
   return (
     <Sheet>

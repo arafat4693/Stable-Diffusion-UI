@@ -12,6 +12,8 @@ export default function Home({ children }: AppProps) {
       <div className="flex flex-col w-full min-h-screen">
         <Navbar />
         {children}
+
+        {/*Toaster to show notifications such as API errors*/}
         <Toaster
           toastOptions={{
             style: {

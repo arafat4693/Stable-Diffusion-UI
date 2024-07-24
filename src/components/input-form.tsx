@@ -12,25 +12,27 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ImgData } from '@/lib/types';
-import { Dispatch } from 'react';
-import { addImage, setError, setGenerating } from '@/redux/slices/imagesSlice';
+import {
+  addImage,
+  setError,
+  setGenerating,
+  setHistory,
+} from '@/redux/slices/imagesSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks/reduxHook';
 import { toast } from 'sonner';
 
+// Form validation with Zod
 const FormSchema = z.object({
   prompt: z.string().min(2, {
     message: 'Prompt must be at least 2 characters.',
   }),
 });
 
-type Prop = {
-  setMessage: Dispatch<React.SetStateAction<ImgData | undefined>>;
-};
-
-export function InputForm({ setMessage }: Prop) {
+export function InputForm() {
   const dispatch = useAppDispatch();
   const { generating } = useAppSelector((state) => state.allImages);
 
+  // For form validation
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -42,6 +44,7 @@ export function InputForm({ setMessage }: Prop) {
     dispatch(setGenerating(true));
     dispatch(setError(null));
 
+    // New socket instance
     const socket = new WebSocket(
       'wss://stable-diffusion.qura.law/generate?token=0f78a6f0-34cd-4377-955f-acc6e1e355a2'
     );
@@ -63,7 +66,7 @@ export function InputForm({ setMessage }: Prop) {
         dispatch(setGenerating(false));
       }
 
-      setMessage(data);
+      dispatch(setHistory(data));
     };
 
     socket.onclose = () => {
@@ -79,6 +82,7 @@ export function InputForm({ setMessage }: Prop) {
 
       dispatch(setError('Error generating image'));
       dispatch(setGenerating(false));
+      dispatch(setHistory(null));
       socket.close();
     };
   }
